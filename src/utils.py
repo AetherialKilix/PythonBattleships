@@ -1,3 +1,4 @@
+from __future__ import annotations
 import fleet
 
 
@@ -80,3 +81,14 @@ def get_cells_from_ends(origin, end):
                 cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
         # return ship cells
         return cells
+
+def get_coords_from_2d_array(data):
+    out = []
+    # iterate over data and save the coords if the cell is true
+    for i in range(data.len):
+        for j in range(data[i].len):
+            if data[i][j]:
+                out.append([j,i])
+    # return output
+    return out
+

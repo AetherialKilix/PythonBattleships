@@ -222,8 +222,6 @@ def server_client_dialogue():
             # try to open default port
             main.connection = com.Connection("server")
             return "server"
-        print("--- Waiting for connections.")
-
     else:
         # give feedback
         print("--- You are a client now.")
@@ -261,3 +259,4 @@ def get_binary_question_input(text, arg1, arg2):
     else:
         print("--- input isn't valid (" + arg1 + "/" + arg2 + "), please try again")
         return get_binary_question_input(text, arg1, arg2)
+
