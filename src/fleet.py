@@ -26,6 +26,28 @@ class ShipOrientation(Enum):  # used is the numeric id, but this is easier to us
         return self.value
 
 
+class ShipPlacementResult:
+    NO_MORE_OF_SIZE = 0, False, "no ship of that size left"
+    DOES_NOT_FIT = 1, False, "the ship does not fit there"
+    SUCCESS = 2, True, "ship {ship_id:d} placed successfully"
+
+    def __int__(self, resultType, ship_id=-1):
+        self.resultType = resultType
+        self.ship_id = ship_id
+
+    def succeeded(self):
+        return self.resultType[0]
+
+    def failed(self):
+        return not self.resultType[0]
+
+    def get_ship_id(self):
+        return self.ship_id
+
+    def get_message(self):
+        return self.resultType[1].format(ship_id=self.ship_id)
+
+
 free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
 ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
 my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
