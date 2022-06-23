@@ -1,3 +1,5 @@
+# fleet.py manages the state of both fleets (player and enemy).
+
 from enum import Enum
 import utils
 from communication import GuessResponse
@@ -58,8 +60,7 @@ free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
 ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
 
 my_fleet = utils.create_2d_list(10, " ")  # stores where the player's ships are stored
-my_fleet_unhit = utils.create_2d_list(10,
-                                      0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
+my_fleet_unhit = utils.create_2d_list(10, 0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
 enemy_field = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
 
 
@@ -102,18 +103,33 @@ def remove_ship(ship_id) -> None:
 
 
 def is_game_lost() -> bool:
+    """returns true, if the game is lost"""
     return utils.add_all_2d(my_fleet_unhit) == 0
 
 
-def process_hit(x: int, y: int, ship_id: int) -> tuple[bool, list]:
-    pass
+def __process_hit(x: int, y: int, ship_id: int) -> tuple[bool, list]:
+    """processed a hit, and determines if a ship has sunk (if so, returns where exactly)"""
+    # get a 2d-list of booleans. True = position occupied by the requested ship
+    same_ship = utils.list_operator_2d(my_fleet, None, lambda a, none: a == ship_id)
+    # get a 2d-list of booleans. True = position occupied by the requested ship and the position is not yet hit
+    same_ship_and_unhit = utils.list_operator_2d(same_ship, my_fleet_unhit, lambda a, b: a and b == 1)
+
+    my_fleet_unhit[x][y] = 0
+
+    if utils.add_all_2d(same_ship_and_unhit) == 0:  # means that all positions of this ship have been hit
+        return True, utils.get_coords_from_2d_array(same_ship)
+    return False, []
 
 
 def process_opponent_guess(x: int, y: int) -> tuple[GuessResponse, list]:
+    """processed an opponent's guess and returns the information needed to respond"""
     field = my_fleet[x][y]
     if field == 0:  # means, there is no ship -> MISS
         return GuessResponse.MISS, []
-    sunk, sunk_positions = process_hit(x, y, field)
+
+    if my_fleet_unhit[x][y] == 0:  # if not a miss, and not hit = 0 -> already guessed -> INVALID
+        return GuessResponse.INVALID, []
+    sunk, sunk_positions = __process_hit(x, y, field)
     if not sunk:
         return GuessResponse.HIT, []
 
@@ -121,3 +137,7 @@ def process_opponent_guess(x: int, y: int) -> tuple[GuessResponse, list]:
         return GuessResponse.WIN, []
 
     return GuessResponse.SUNK, sunk_positions
+
+
+def get_fleet_as_string() -> list[list[str]]:
+    return utils.list_operator_2d(my_fleet, my_fleet_unhit, lambda a, b: a if b else utils.convert_to_circled_number(a))

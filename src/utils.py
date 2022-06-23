@@ -41,11 +41,26 @@ def list_operator(a: list, b: list | None, operator=lambda a, b: a + b) -> list:
         for i in range(len(a)):
             out = operator(a[i], None)
     else:
-        if len(a) != len(b):
-            raise ValueError
         for i in range(len(a)):
             out = operator(a[i], b[i])
     return out
+
+
+def list_operator_2d(a: list[list], b: list[list] | None, operator=lambda a, b: a + b) -> list[list]:
+    out = []
+    if b is None:
+        for row in range(len(a)):
+            this_row = []
+            for cell in range(len(row)):
+                this_row.append(operator(a[row][cell], None))
+            out.append(this_row)
+    else:
+        for row in range(len(a)):
+            this_row = []
+            for cell in range(len(row)):
+                this_row.append(operator(a[row][cell], b[row][cell]))
+            out.append(this_row)
+    return out;
 
 
 def create_and_fill_list(size: int, fill) -> list:
@@ -81,6 +96,13 @@ def get_cells_from_ends(origin, end):
                 cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
         # return ship cells
         return cells
+
+
+__number_map = [" ", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾"]
+
+
+def convert_to_circled_number(number: int) -> str:
+    return __number_map[number]
 
 def get_coords_from_2d_array(data):
     out = []
