@@ -1,3 +1,5 @@
+import fleet
+
 def add_all(values: list):
     out = 0
     for i in values:
@@ -37,3 +39,32 @@ def create_and_fill_list(size: int, fill) -> list:
     for i in range(size):
         out.append(fill)
     return out
+
+def get_cells_from_ends(origin, end):
+    # calculate delta
+    delta = [0, 0]
+    delta[0] = int(end[0]) - int(origin[0])
+    delta[1] = int(end[1]) - int(origin[1])
+    # check for rudimentary validity
+    if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
+        print("--- input has to be in one vertical or horizontal line, please try again:")
+        # try again
+        return None
+    # if passes rudimentary validity test
+    else:
+        # calc ship-length
+        ship_length = delta[0] + delta[1]
+        # check rotation
+        if delta[0] > 0:
+            direction = fleet.ShipOrientation.HORIZONTAL
+        else:
+            direction = fleet.ShipOrientation.VERTICAL
+        # get all cells which are taken up by the ship
+        cells = []
+        for i in range(abs(ship_length)):
+            if direction == fleet.ShipOrientation.HORIZONTAL:
+                cells.append([origin[0] + i * (ship_length / abs(ship_length)), origin[1]])
+            else:
+                cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
+        # return ship cells
+        return cells
