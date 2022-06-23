@@ -5,15 +5,14 @@ import fleet
 import utils
 from enum import Enum
 
-
 INSTANCE = None
 
 
 class GuessResponse(Enum):
-    MISS = 0,
-    HIT = 1,
-    SUNK = 2,
-    WIN = 3,
+    MISS = 0
+    HIT = 1
+    SUNK = 2
+    WIN = 3
     INVALID = 4
 
     @classmethod
@@ -29,7 +28,7 @@ class GuessResponse(Enum):
         if string == "invalid":
             return GuessResponse.INVALID
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.value == 0:
             return "miss"
         if self.value == 1:
@@ -50,8 +49,10 @@ def interpret_sunk_payload(payload: str):
 class Connection(object):
     """Uses sockets to communicate with opponent. 'Packet'-format: 'type;data;' """
 
-    def __init__(self, open_as="client", port: int = 5778, address: str = socket.gethostname()):
+    def __init__(self, open_as="client", port: int = 5778, address: str = "127.0.0.1"):
         """Opens the communication either as a server or a client"""
+        if not address:
+            address = "127.0.0.1"
         mode = open_as
         if mode == "client":
             self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -59,7 +60,7 @@ class Connection(object):
         elif mode == "server":
             server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server.bind((address, port))
-            server.listen()
+            server.listen(1)
             self.connection, ignore = server.accept()  # no while true and separate thread needed, this is a 1 to 1 connection
         else:
             raise ValueError("only 'server' and 'client' as arguments allowed. found: " + str(open_as))
@@ -85,8 +86,7 @@ class Connection(object):
         data = data.split(";")
         if len(data) != 3:  # [0] = type, [1] = payload, [2] = ""
             return None
-        guess = GuessResponse.from_string(data[0])
-        if not guess == "guess":
+        if not data[0] == "guess":
             return None
         position_strings = data[1].split(",")
 
@@ -100,4 +100,3 @@ class Connection(object):
 
     def close(self):
         self.connection.close()
-

@@ -2,28 +2,6 @@ import fleet
 import communication as com
 import utils
 
-dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3]]
-dummy_enemy_field = [["■", "○", " ", " ", " ", " ", " ", " ", " ", " "],
-                     ["■", " ", " ", " ", "○", " ", " ", " ", " ", " "],
-                     ["■", "●", " ", " ", " ", " ", " ", " ", "●", " "],
-                     ["■", " ", " ", " ", "■", "■", " ", " ", " ", " "],
-                     [" ", " ", "○", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", "○", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", "●", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
-
-# ■○●
 
 field_spacer = "         "
 x_coords = "     A   B   C   D   E   F   G   H   I   J  "
@@ -103,6 +81,7 @@ def get_coord_input(text):
         return get_coord_input(text)
 
 
+# TODO: while True & continue
 def get_place_input():
     # ask player for origin coords
     origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] :")
@@ -173,7 +152,7 @@ def active_turn_dialogue(state):
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
         # send answer to enemy
-        com.INSTANCE.send_response()
+        com.INSTANCE.send_response(action[0], action[1])
         # start over
         active_turn_dialogue("playing")
     elif state == "client":
@@ -183,7 +162,7 @@ def active_turn_dialogue(state):
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
         # send answer to enemy
-        com.INSTANCE.send_response()
+        com.INSTANCE.send_response(action[0], action[1])
         # start over
         active_turn_dialogue("playing")
     elif state == "playing":
@@ -198,14 +177,14 @@ def active_turn_dialogue(state):
         if response == fleet.GuessResponse.WIN:
             com.INSTANCE.close()
             quit()
-        # TODO: implement guess interpretation
+        fleet.process_response(target[0], target[1], response, payload)
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
         # send answer to enemy
-        com.INSTANCE.send_response()
+        com.INSTANCE.send_response(action[0], action[1])
         # start  over
         active_turn_dialogue("playing")
     else:
@@ -215,7 +194,7 @@ def active_turn_dialogue(state):
 def print_enemy_action(action):
     if action == com.GuessResponse.SUNK:
         print("The opponent has sunk one of your ships!")
-    if action == com.GuessResponse.HIt:
+    if action == com.GuessResponse.HIT:
         print("The opponent has hit one of your ships!")
     if action == com.GuessResponse.MISS:
         print("The opponent has missed!")
@@ -226,7 +205,7 @@ def print_enemy_action(action):
 def print_own_action(action):
     if action == com.GuessResponse.SUNK:
         print("You sunk one of the opponents ships!")
-    if action == com.GuessResponse.HIt:
+    if action == com.GuessResponse.HIT:
         print("You hit one of the opponents ships!")
     if action == com.GuessResponse.MISS:
         print("You have missed!")

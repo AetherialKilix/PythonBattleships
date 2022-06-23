@@ -14,7 +14,7 @@ def add_all_2d(values: list) -> int:
     out = 0
     for row in values:
         for column in row:
-            out += list[row][column]
+            out += column
     return out
 
 
@@ -52,13 +52,13 @@ def list_operator_2d(a: list[list], b: list[list] | None, operator=lambda a, b: 
     if b is None:
         for row in range(len(a)):
             this_row = []
-            for cell in range(len(row)):
+            for cell in range(len(a[row])):
                 this_row.append(operator(a[row][cell], None))
             out.append(this_row)
     else:
         for row in range(len(a)):
             this_row = []
-            for cell in range(len(row)):
+            for cell in range(len(a[row])):
                 this_row.append(operator(a[row][cell], b[row][cell]))
             out.append(this_row)
     return out;
@@ -92,26 +92,23 @@ def get_cells_from_ends(origin, end):
         cells = []
         for i in range(abs(ship_length)):
             if direction == fleet.ShipOrientation.HORIZONTAL:
-                cells.append([origin[0] + i * (ship_length / abs(ship_length)), origin[1]])
+                cells.append([origin[0] + i * int(ship_length / abs(ship_length)), origin[1]])
             else:
-                cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
+                cells.append([origin[0], origin[1] + i * int(ship_length / abs(ship_length))])
         # return ship cells
         return cells
-
-
-__number_map = [" ", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾"]
-
-
-def convert_to_circled_number(number: int) -> str:
-    return __number_map[number]
 
 
 def get_coords_from_2d_array(data):
     out = []
     # iterate over data and save the coords if the cell is true
-    for i in range(data.len):
-        for j in range(data[i].len):
+    for i in range(len(data)):
+        for j in range(len(data[i])):
             if data[i][j]:
                 out.append([j, i])
     # return output
     return out
+
+
+def get_ends_of_list(list_in: list) -> list:
+    return [list_in[0], list_in[len(list_in) - 1]]
