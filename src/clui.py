@@ -83,6 +83,8 @@ def get_coord_input(text):
 
 # TODO: while True & continue
 def get_place_input():
+    # display field
+    display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
     # ask player for origin coords
     origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] :")
     # ask player for end coords
@@ -134,6 +136,8 @@ def ship_placement_dialogue():
 
 def active_turn_dialogue(state):
     if state == "server":
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # let player select target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         # send target coords
@@ -148,6 +152,8 @@ def active_turn_dialogue(state):
         # TODO: implement guess interpretation
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
@@ -161,11 +167,15 @@ def active_turn_dialogue(state):
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # send answer to enemy
         com.INSTANCE.send_response(action[0], action[1])
         # start over
         active_turn_dialogue("playing")
     elif state == "playing":
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # let player select a target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         # send target coords
@@ -183,6 +193,8 @@ def active_turn_dialogue(state):
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
         print_enemy_action(action)
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # send answer to enemy
         com.INSTANCE.send_response(action[0], action[1])
         # start  over
