@@ -1,10 +1,18 @@
 import fleet
 
 
-def add_all(values: list):
+def add_all(values: list) -> int:
     out = 0
     for i in values:
         out += i
+    return out
+
+
+def add_all_2d(values: list) -> int:
+    out = 0
+    for row in values:
+        for column in row:
+            out += list[row][column]
     return out
 
 
@@ -26,12 +34,16 @@ def to_string_list(data: list) -> list:
     return out
 
 
-def list_operator(a: list, b: list, operator=lambda a, b: a + b) -> list:
+def list_operator(a: list, b: list | None, operator=lambda a, b: a + b) -> list:
     out = []
-    if len(a) != len(b):
-        raise ValueError
-    for i in range(len(a)):
-        out = operator(a[i], b[i])
+    if b is None:
+        for i in range(len(a)):
+            out = operator(a[i], None)
+    else:
+        if len(a) != len(b):
+            raise ValueError
+        for i in range(len(a)):
+            out = operator(a[i], b[i])
     return out
 
 
@@ -40,6 +52,7 @@ def create_and_fill_list(size: int, fill) -> list:
     for i in range(size):
         out.append(fill)
     return out
+
 
 def get_cells_from_ends(origin, end):
     # calculate delta

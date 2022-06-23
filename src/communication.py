@@ -10,7 +10,8 @@ class GuessResponse(Enum):
     MISS = 0,
     HIT = 1,
     SUNK = 2,
-    WIN = 3
+    WIN = 3,
+    INVALID = 4
 
     @classmethod
     def from_string(cls, string: str):
@@ -22,6 +23,8 @@ class GuessResponse(Enum):
             return GuessResponse.SUNK
         if string == "win":
             return GuessResponse.WIN
+        if string == "invalid":
+            return GuessResponse.INVALID
 
     def __str__(self):
         if self.value == 0:
@@ -32,6 +35,8 @@ class GuessResponse(Enum):
             return "sunk"
         if self.value == 3:
             return "win"
+        if self.value == 4:
+            return "invalid"
 
 
 def interpret_sunk_payload(payload: str):

@@ -56,7 +56,10 @@ class ShipPlacementResult(object):
 
 free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
 ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
-my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
+
+my_fleet = utils.create_2d_list(10, " ")  # stores where the player's ships are stored
+my_fleet_unhit = utils.create_2d_list(10,
+                                      0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
 enemy_field = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
 
 
@@ -98,7 +101,23 @@ def remove_ship(ship_id) -> None:
     free_ship_ids[ship_id] = True
 
 
-def process_guess(x: int, y: int) -> GuessResponse:
+def is_game_lost() -> bool:
+    return utils.add_all_2d(my_fleet_unhit) == 0
+
+
+def process_hit(x: int, y: int, ship_id: int) -> tuple[bool, list]:
+    pass
+
+
+def process_guess(x: int, y: int) -> tuple[GuessResponse, list]:
     field = my_fleet[x][y]
-    if field == 0:
-        return GuessResponse.MISS
+    if field == 0:  # means, there is no ship -> MISS
+        return GuessResponse.MISS, []
+    sunk, sunk_positions = process_hit(x, y, field)
+    if not sunk:
+        return GuessResponse.HIT, []
+
+    if is_game_lost():
+        return GuessResponse.WIN, []
+
+    return GuessResponse.SUNK, sunk_positions
