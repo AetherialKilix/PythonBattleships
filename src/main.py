@@ -1,4 +1,4 @@
-import cli_utils as cli
+import clui as cli
 
 connection = None
 
