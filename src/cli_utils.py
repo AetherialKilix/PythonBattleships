@@ -1,3 +1,5 @@
+import fleet
+
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -8,26 +10,28 @@ dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3]]
-dummy_enemy_field = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", "O", " ", " ", " ", " ", " "],
-                     [" ", "X", " ", " ", " ", " ", " ", " ", "X", " "],
+dummy_enemy_field = [["■", "○", " ", " ", " ", " ", " ", " ", " ", " "],
+                     ["■", " ", " ", " ", "○", " ", " ", " ", " ", " "],
+                     ["■", "●", " ", " ", " ", " ", " ", " ", "●", " "],
+                     ["■", " ", " ", " ", "■", "■", " ", " ", " ", " "],
+                     [" ", " ", "○", " ", " ", " ", " ", " ", " ", " "],
                      [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", "O", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", " ", "○", " ", " ", " ", " "],
                      [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", "O", " ", " ", " ", " "],
-                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-                     [" ", " ", " ", "X", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", "●", " ", " ", " ", " ", " ", " "],
                      [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
 
-fieldSpacer = "         "
+# ■○●
+
+field_spacer = "         "
 x_coords = "     A   B   C   D   E   F   G   H   I   J  "
 horizontalLine = "   +---+---+---+---+---+---+---+---+---+---+"
 
 
 def display_current_turn(my_data, en_data):
     # print initial lines
-    print(x_coords + fieldSpacer + x_coords)
-    print(horizontalLine + fieldSpacer + horizontalLine)
+    print(x_coords + field_spacer + x_coords)
+    print(horizontalLine + field_spacer + horizontalLine)
     # create display line by line
     for i in range(len(my_data)):
         # add row counter to my field
@@ -41,7 +45,7 @@ def display_current_turn(my_data, en_data):
                 line += "|   "
 
         # add spacer and row counter to enemy field
-        line += "|" + fieldSpacer + " " + str(i) + " "
+        line += "|" + field_spacer + " " + str(i) + " "
 
         # iterate over the row of my field
         for j in range(len(my_data[i])):
@@ -56,7 +60,7 @@ def display_current_turn(my_data, en_data):
         # draw constructed line
         print(line)
         # draw the lower border to the row
-        print(horizontalLine + fieldSpacer + horizontalLine)
+        print(horizontalLine + field_spacer + horizontalLine)
 
 
 coord_dictionary = {
@@ -74,7 +78,8 @@ coord_dictionary = {
 
 default_text = ">>> Please enter your Target [Column,Row] :"
 
-def getCoordInput(text):
+
+def get_coord_input(text):
     # get player input
     target = input(text)
     # declare output
@@ -92,23 +97,42 @@ def getCoordInput(text):
         # inform the player about their mistake
         print("--- input not valid, please try again:")
         # try again
-        return getCoordInput(text)
+        return get_coord_input(text)
     # return output
 
 
-def getPlaceInput():
-    origin = getCoordInput(">>> Please enter the origin of the ship [Column,Row] :")
-    destination = getCoordInput(">>> Please enter the end of the ship [Column,Row] :")
-
+def get_place_input():
+    # ask player for origin coords
+    origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] :")
+    # ask player for end coords
+    destination = get_coord_input(">>> Please enter the end of the ship [Column,Row] :")
+    # calculate delta
     delta = [0, 0]
     delta[0] = int(destination[0]) - int(origin[0])
     delta[1] = int(destination[1]) - int(origin[1])
-
+    # check for rudimentary validity
     if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
-        print("--- input not valid, please try again:")
-        return getPlaceInput()
+        print("--- input has to be in one vertical or horizontal line, please try again:")
+        # try again
+        return get_place_input()
+    # if passes rudimentary validity test
     else:
+        # calc ship-length
         ship_length = delta[0] + delta[1]
-        # TODO: Check if ships of that size are left
-        # TODO: place
+        # check rotation
+        if delta[0] > 0:
+            direction = fleet.ShipOrientation.HORIZONTAL
+        else:
+            direction = fleet.ShipOrientation.VERTICAL
+        # get all cells which are taken up by the ship
+        cells = []
+        for i in range(abs(ship_length)):
+            if direction == fleet.ShipOrientation.HORIZONTAL:
+                cells.append([origin[0] + i * (ship_length / abs(ship_length)), origin[1]])
+            else:
+                cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
+
         print(ship_length)
+        print(cells)
+
+        # TODO: place
