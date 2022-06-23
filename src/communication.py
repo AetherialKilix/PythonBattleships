@@ -5,7 +5,7 @@ server = None
 mode = "client"
 
 
-def open(open_as="client", port: int=5778, address: str="localhost"):
+def open(open_as="client", port: int = 5778, address: str = "127.0.0.1"):
     """Opens the communication either as a server or a client"""
     global mode, sock, server
     mode = open_as
@@ -16,4 +16,3 @@ def open(open_as="client", port: int=5778, address: str="localhost"):
         pass
     else:
         raise ValueError("only 'server' and 'client' as arguments allowed. found: " + str(open_as))
-

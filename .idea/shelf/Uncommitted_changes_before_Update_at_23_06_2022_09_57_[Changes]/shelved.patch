@@ -1,0 +1,86 @@
+Index: src/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main.py b/src/main.py
+--- a/src/main.py	(revision 4b12bf1003bfb534982925f59386577a2bbfa151)
++++ b/src/main.py	(date 1654847245014)
+@@ -1,0 +1,13 @@
++from fleet import *
++import utils
++
++"""
++shipsLeft = DEFAULT_FLEET
++while utils.add_all(shipsLeft) > 0:
++    print("Please place ships:", shipsLeft)
++"""
++
++print('"' + str(enemyField[0][0]) + '"')
++print(enemyField[0][0].name)
++print(enemyField[0][0].value)
++print(str(enemyField[0][0]))
+\ No newline at end of file
+Index: src/utils.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/utils.py b/src/utils.py
+new file mode 100644
+--- /dev/null	(date 1654847206981)
++++ b/src/utils.py	(date 1654847206981)
+@@ -0,0 +1,23 @@
++def add_all(values):
++    out = 0
++    for i in values:
++        out += i
++    return out
++
++
++def create_2d_list(size, fill=None):
++    out = []
++    for i in range(size):
++        this = []
++        if fill is not None:
++            for j in range(size):
++                this.append(fill)
++        out.append(this)
++    return out
++
++
++def to_string_list(data):
++    out = []
++    for entry in data:
++        out.append(str(entry))
++    return out
+Index: src/fleet.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/fleet.py b/src/fleet.py
+new file mode 100644
+--- /dev/null	(date 1654847133659)
++++ b/src/fleet.py	(date 1654847133659)
+@@ -0,0 +1,20 @@
++from enum import Enum
++import utils
++
++
++class FieldState(Enum):
++    UNKNOWN = 0
++    MISS = 1
++    HIT = 2
++
++    def __str__(self):
++        if self.value == 1:
++            return "O"
++        elif self.value == 2:
++            return "X"
++        return " "
++
++
++DEFAULT_FLEET = [0, 2, 2, 1, 1, 1]
++myFleet = utils.create_2d_list(10, 0)
++enemyField = utils.create_2d_list(10, FieldState.UNKNOWN)

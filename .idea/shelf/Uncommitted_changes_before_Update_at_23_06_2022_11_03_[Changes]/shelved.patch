@@ -1,0 +1,137 @@
+Index: src/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main.py b/src/main.py
+--- a/src/main.py	(revision ca00ace52c391b04ee3986b74fecc294e07b6a22)
++++ b/src/main.py	(date 1655974274852)
+@@ -1,1 +1,8 @@
++import fleet
++import utils
++
+ 
++# TODO: connect to opponent
++
++# fleet setup
++#fleet.setup()
+Index: src/fleet.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/fleet.py b/src/fleet.py
+new file mode 100644
+--- /dev/null	(date 1655974332139)
++++ b/src/fleet.py	(date 1655974332139)
+@@ -0,0 +1,75 @@
++from enum import Enum
++import utils
++
++
++class FieldState(Enum):  # stores what we know about an enemy field
++    UNKNOWN = 0  # not yet known
++    MISS = 1  # shot, and missed
++    HIT = 2  # shot, and hit
++
++    def __str__(self):
++        if self.value == 1:
++            return "O"
++        elif self.value == 2:
++            return "X"
++        return " "
++
++
++class ShipOrientation(Enum):  # used is the numeric id, but this is easier to use code-side
++    HORIZONTAL = 0
++    VERTICAL = 1
++
++
++SHIP_NAMES = ["", "1x1", "1x2", "1x3", "1x4", "1x5"]  # stores how the ships are named
++DEFAULT_FLEET = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet
++myFleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
++enemyField = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
++
++
++def get_shipcount_as_string(ships_left):
++    buffer = "["  # create a string buffer containing the "prefix"
++    for i in range(len(SHIP_NAMES) - 1):  # there are no 1x0 ships, so we simply offset i by 1
++        buffer += SHIP_NAMES[i + 1] + ": " + str(ships_left[i + 1])  # e.g.: "1x1: 2"
++        if i + 1 < len(SHIP_NAMES) - 1:  # if the next index is out-of-bounds, then don't add the ", "
++            buffer += ", "
++    buffer += "]"  # append the "suffix"
++    return buffer  # return the buffer
++
++
++def place_ship(x, y, size, orientation):
++    pass
++
++
++def setup(ships):
++    ships_left = ships.copy()
++    while utils.add_all(ships_left) > 0:
++        print("Please place a ship from your fleet ", get_shipcount_as_string(ships_left))
++        # init variables
++        x = 0
++        y = 0
++        size = 0
++        orientation = "horizontal"
++
++        answer = input("Please enter the upper (or left) position of the ship ('x' or 'x,y'): ")
++        answer = answer.split(",")  # split a "x,y" into an [x, y] or a "x" into [x]
++        try:
++            x = int(answer[0])
++        except ValueError:
++            print("Sorry, but your answer could not be parsed as a number.")
++            continue
++
++        if len(answer) > 1:
++            try:
++                y = int(answer[1])
++            except ValueError:
++                print("Sorry, but the y-component could not be parsed as a number.")
++                continue
++        else:
++            answer = input("Please enter the y-component of this corner: ")
++            try:
++                y = int(answer)
++            except ValueError:
++                print("Sorry, but your answer could not be parsed as a number.")
++                continue
++
++
+Index: src/utils.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/utils.py b/src/utils.py
+new file mode 100644
+--- /dev/null	(date 1655971056122)
++++ b/src/utils.py	(date 1655971056122)
+@@ -0,0 +1,23 @@
++def add_all(values):
++    out = 0
++    for i in values:
++        out += i
++    return out
++
++
++def create_2d_list(size, fill=None):
++    out = []
++    for i in range(size):
++        this = []
++        if fill is not None:
++            for j in range(size):
++                this.append(fill)
++        out.append(this)
++    return out
++
++
++def to_string_list(data):
++    out = []
++    for entry in data:
++        out.append(str(entry))
++    return out

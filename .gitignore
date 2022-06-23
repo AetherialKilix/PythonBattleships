@@ -120,5 +120,5 @@ dmypy.json
 .pyre/
 
 # msc
-battleships.iml
-misc.xml
+/idea/battleships.iml
+/idea/misc.xml
