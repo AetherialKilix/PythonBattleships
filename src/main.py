@@ -1,5 +1,6 @@
 import cli_utils as cli
 
+connection = None
 
 def event_order():
     cli.server_client_dialogue()

@@ -1,5 +1,6 @@
 import fleet
 import communication as com
+import main
 
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -191,14 +192,14 @@ def server_client_dialogue():
                 # cast port to integer
                 port = int(port)
                 # try to open port
-                com.open("server", port)
+                main.connection = com.Connection("server", port)
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open default port
-                com.open("server")
+                main.connection = com.Connection("server")
         else:
             # try to open default port
-            com.open("server")
+            main.connection = com.Connection("server")
         print("--- Waiting for connections.")
 
     else:
@@ -214,14 +215,14 @@ def server_client_dialogue():
                 # cast port to integer
                 port = int(port)
                 # try to open connection to ip via defined port
-                com.open("client", port, ip)
+                main.connection = com.Connection("client", port, ip)
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open connection to ip via default port
-                com.open("client", address=ip)
+                main.connection = com.Connection("client", address=ip)
         else:
             # try to open connection to ip via default port
-            com.open("client", address=ip)
+            main.connection = com.Connection("client", address=ip)
 
 
 def get_binary_question_input(text, arg1, arg2):
