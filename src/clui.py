@@ -56,7 +56,7 @@ coord_dictionary = {
 
 def get_coord_input(text):
     # get player input
-    target = input(text)
+    target = input(text).upper()
     # declare output
     out = []
     # try interpreting the input
