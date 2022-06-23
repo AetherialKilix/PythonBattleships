@@ -61,7 +61,6 @@ def get_coord_input(text):
     out = []
     # try interpreting the input
     try:
-        print(target[0] + "|" + target[1])
         # lookup the value of a letter as an integer
         out.append(coord_dictionary[target[0]])
         # cast second value to int
