@@ -2,7 +2,8 @@ from enum import Enum
 import utils
 
 
-class FieldState(Enum):  # stores what is known about a cell in the enemy field
+class FieldState(Enum):
+    """stores what is known about a cell in the enemy field"""
     UNKNOWN = 0  # not yet known
     MISS = 1  # shot, and missed
     HIT = 2  # shot, and hit
@@ -27,6 +28,7 @@ class ShipOrientation(Enum):  # used is the numeric id, but this is easier to us
 
 
 class ShipPlacementResult(object):
+    """returned by "place_ship" and gives various information about the call"""
     NO_MORE_OF_SIZE = 0, False, "no ship of that size left"
     DOES_NOT_FIT = 1, False, "the ship does not fit there"
     SUCCESS = 2, True, "ship {ship_id:d} placed successfully"
@@ -42,7 +44,7 @@ class ShipPlacementResult(object):
         return self.resultType[1]
 
     def failed(self) -> bool:
-        return not self.resultType[0]
+        return not self.resultType[1]
 
     def get_ship_id(self) -> int:
         return self.ship_id
@@ -55,6 +57,10 @@ free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
 ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
 my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
 enemy_field = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
+
+
+def is_out_of_ships() -> bool:
+    return utils.add_all(ships_left)
 
 
 def get_smallest_ship_id() -> int:
@@ -83,7 +89,7 @@ def place_ship(ship_positions: list) -> ShipPlacementResult:
 
 
 def remove_ship(ship_id) -> None:
-    """This method clears all fields that have a ship of the supplied id"""
+    """Clears all fields that have a ship of the supplied id"""
     for x in range(len(my_fleet)):
         for y in range(len(my_fleet[0])):
             if my_fleet[x][y] == ship_id:
