@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import socket
-import fleet
 import utils
 from enum import Enum
 
@@ -100,3 +99,19 @@ class Connection(object):
 
     def close(self):
         self.connection.close()
+
+    def await_done(self):
+        """this method blocks, until a "done" was received (or an error occurred)"""
+        data = self.connection.recv(512).decode()
+        data = data.split(";")
+        if len(data) != 3:  # [0] = type, [1] = payload, [2] = ""
+            return None
+        if not data[0] == "done":
+            return None
+
+    def send_done(self):
+        self.connection.send("done;;".encode())
+
+    def await_both_done(self):
+        self.send_done()
+        self.await_done()

@@ -3,9 +3,9 @@ import communication as com
 import utils
 
 
-field_spacer = "         "
-x_coords = "     A   B   C   D   E   F   G   H   I   J  "
-horizontalLine = "   +---+---+---+---+---+---+---+---+---+---+"
+field_spacer    = "         "
+x_coords        = "     A   B   C   D   E   F   G   H   I   J  "
+horizontalLine  = "   +---+---+---+---+---+---+---+---+---+---+"
 
 
 def display_current_turn(my_data, en_data):
@@ -101,8 +101,10 @@ def get_place_input():
             # PARTEY
             # if out of ships
             if fleet.is_out_of_ships():
+                # display fields
+                display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
                 print("--- Done placing, waiting for other player...")
-                # TODO: Tell Networking that it should tell the other player he stinks
+                com.INSTANCE.await_both_done()
             # continue placing
             else:
                 get_place_input()
@@ -134,31 +136,32 @@ def ship_placement_dialogue():
 
 def active_turn_dialogue(state):
     if state == "server":
-        # display fields
-        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # let player select target
         target = get_coord_input(">>> Please enter your Target [Column,Row] : ")
         # send target coords
         com.INSTANCE.send_guess(target[0], target[1])
         # receive answer
         response, payload = com.INSTANCE.await_response()
-        # interpret answer
-        print_own_action(response)
         if response == fleet.GuessResponse.WIN:
             com.INSTANCE.close()
             quit()
-        elif response == fleet.GuessResponse.INVALID:
-            print("you hit the same tile a second time. Please just don't. You are smarter than this!")
-        # TODO: implement guess interpretation
-        # wait for enemy guess
-        x, y = com.INSTANCE.await_guess()
+        fleet.process_response(target[0], target[1], response, payload)
         # display fields
         display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
+        # interpret answer
+        print_own_action(response)
+        # wait for enemy guess
+        x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_enemy_action(action)
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
+        print_enemy_action(action[0])
         # send answer to enemy
         com.INSTANCE.send_response(action[0], action[1])
+        if action[0] == com.GuessResponse.WIN:
+            com.INSTANCE.close()
+            quit()
         # start over
         active_turn_dialogue("playing")
     elif state == "client":
@@ -166,37 +169,44 @@ def active_turn_dialogue(state):
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_enemy_action(action)
         # display fields
         display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
+        print_enemy_action(action[0])
         # send answer to enemy
         com.INSTANCE.send_response(action[0], action[1])
+        if action[0] == com.GuessResponse.WIN:
+            com.INSTANCE.close()
+            quit()
         # start over
         active_turn_dialogue("playing")
     elif state == "playing":
-        # display fields
-        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # let player select a target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         # send target coords
         com.INSTANCE.send_guess(target[0], target[1])
         # receive answer
         response, payload = com.INSTANCE.await_response()
-        # interpret answer
-        print_own_action(response)
         if response == fleet.GuessResponse.WIN:
+            com.INSTANCE.send_response(com.GuessResponse.WIN, [])
             com.INSTANCE.close()
             quit()
         fleet.process_response(target[0], target[1], response, payload)
+        # display fields
+        display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
+        # interpret answer
+        print_own_action(response)
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_enemy_action(action)
         # display fields
         display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
+        print_enemy_action(action[0])
         # send answer to enemy
         com.INSTANCE.send_response(action[0], action[1])
+        if action[0] == com.GuessResponse.WIN:
+            com.INSTANCE.close()
+            quit()
         # start  over
         active_turn_dialogue("playing")
     else:
@@ -206,24 +216,28 @@ def active_turn_dialogue(state):
 def print_enemy_action(action):
     if action == com.GuessResponse.SUNK:
         print("The opponent has sunk one of your ships!")
-    if action == com.GuessResponse.HIT:
+    elif action == com.GuessResponse.HIT:
         print("The opponent has hit one of your ships!")
-    if action == com.GuessResponse.MISS:
+    elif action == com.GuessResponse.MISS:
         print("The opponent has missed!")
-    if action == com.GuessResponse.WIN:
+    elif action == com.GuessResponse.WIN:
         print("The opponent has won the game! Better luck next time!")
         quit()
+    else:
+        print("The opponent has played an invalid turn!")
 
 
 def print_own_action(action):
     if action == com.GuessResponse.SUNK:
         print("You sunk one of the opponents ships!")
-    if action == com.GuessResponse.HIT:
+    elif action == com.GuessResponse.HIT:
         print("You hit one of the opponents ships!")
-    if action == com.GuessResponse.MISS:
+    elif action == com.GuessResponse.MISS:
         print("You have missed!")
-    if action == com.GuessResponse.WIN:
+    elif action == com.GuessResponse.WIN:
         print("You have won the game! Congratulations!")
+    elif action == com.GuessResponse.INVALID:
+        print("You hit the same tile a second time. Please just don't. You are smarter than this!")
 
 
 def server_client_dialogue():
