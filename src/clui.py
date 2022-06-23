@@ -148,6 +148,8 @@ def active_turn_dialogue(state):
         if response == fleet.GuessResponse.WIN:
             com.INSTANCE.close()
             quit()
+        elif response == fleet.GuessResponse.INVALID:
+            print("you hit the same tile a second time. Please just don't. You are smarter than this!")
         # TODO: implement guess interpretation
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
