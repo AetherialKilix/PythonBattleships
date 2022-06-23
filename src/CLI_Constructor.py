@@ -1,23 +1,23 @@
-localField = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-              [2, 3, 3, 3, 3, 3, 3, 3, 3, 3]]
-enemyField = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-              [" ", " ", " ", " ", "O", " ", " ", " ", " ", " "],
-              [" ", "X", " ", " ", " ", " ", " ", " ", "X", " "],
-              [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-              [" ", " ", "O", " ", " ", " ", " ", " ", " ", " "],
-              [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-              [" ", " ", " ", " ", " ", "O", " ", " ", " ", " "],
-              [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-              [" ", " ", " ", "X", " ", " ", " ", " ", " ", " "],
-              [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
+dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                     [2, 3, 3, 3, 3, 3, 3, 3, 3, 3]]
+dummy_enemy_field = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", "O", " ", " ", " ", " ", " "],
+                     [" ", "X", " ", " ", " ", " ", " ", " ", "X", " "],
+                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", "O", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", " ", "O", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", "X", " ", " ", " ", " ", " ", " "],
+                     [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
 
 fieldSpacer = "         "
 x_coords = "     A   B   C   D   E   F   G   H   I   J  "
@@ -31,7 +31,7 @@ def display_current_turn(my_data, en_data):
     # create display line by line
     for i in range(len(my_data)):
         # add row counter to my field
-        line = str(i ) + "  "
+        line = str(i) + "  "
         # iterate over the row of my field
         for j in range(len(my_data[i])):
             # draw datapoint if it isn't 0 ; otherwise draw an empty cell
@@ -72,16 +72,44 @@ coord_dictionary = {
     "J": 9,
 }
 
+default_text = ">>> Please enter your Target [Column,Row] :"
 
-def getInput(text):
-
+def getCoordInput(text):
+    # get player input
     target = input(text)
+    # declare output
     out = []
+    # try interpreting the input
     try:
+        # split input into two parts [x,y]
         out = target.split(",")
+        # lookup the value of a letter as an integer
         out[0] = coord_dictionary[out[0]]
+        # cast second value to int
         out[1] = int(out[1])
+    # if interpreting wasn't successful try again
     except:
+        # inform the player about their mistake
         print("--- input not valid, please try again:")
-        return getInput()
+        # try again
+        return getCoordInput()
+    # return output
     return out
+
+
+def getPlaceInput():
+    origin = getCoordInput(">>> Please enter the origin of the ship [Column,Row] :")
+    destination = getCoordInput(">>> Please enter the end of the ship [Column,Row] :")
+
+    delta = [0,0]
+    delta[0] = int(destination[0]) - int(origin[0])
+    delta[1] = int(destination[1]) - int(origin[1])
+
+    if delta[0] != 0 and delta[1] != 0 or delta[0] == 0 and delta[1] == 0:
+        print("--- input not valid, please try again:")
+        return getPlaceInput()
+    else:
+        ship_length = delta[0] + delta[1]
+        # TODO: Check if ships of that size are left
+        # TODO: place
+        print(ship_length)
