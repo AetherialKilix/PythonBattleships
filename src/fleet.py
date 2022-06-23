@@ -1,5 +1,6 @@
 from enum import Enum
 import utils
+from communication import GuessResponse
 
 
 class FieldState(Enum):
@@ -7,7 +8,7 @@ class FieldState(Enum):
     UNKNOWN = 0  # not yet known
     MISS = 1  # shot, and missed
     HIT = 2  # shot, and hit
-    DESTROYED = 3  # shot, hit, and complete ship destroyed
+    SUNK = 3  # shot, hit, and complete ship destroyed
 
     def __str__(self):
         if self.value == 1:
@@ -95,3 +96,9 @@ def remove_ship(ship_id) -> None:
             if my_fleet[x][y] == ship_id:
                 my_fleet[x][y] = 0
     free_ship_ids[ship_id] = True
+
+
+def process_guess(x: int, y: int) -> GuessResponse:
+    field = my_fleet[x][y]
+    if field == 0:
+        return GuessResponse.MISS
