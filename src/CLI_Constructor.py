@@ -25,14 +25,13 @@ horizontalLine = "   +---+---+---+---+---+---+---+---+---+---+"
 
 
 def display_current_turn(my_data, en_data):
-
     # print initial lines
     print(x_coords + fieldSpacer + x_coords)
     print(horizontalLine + fieldSpacer + horizontalLine)
     # create display line by line
     for i in range(len(my_data)):
         # add row counter to my field
-        line = str(i + 1) + "  "
+        line = str(i ) + "  "
         # iterate over the row of my field
         for j in range(len(my_data[i])):
             # draw datapoint if it isn't 0 ; otherwise draw an empty cell
@@ -60,4 +59,29 @@ def display_current_turn(my_data, en_data):
         print(horizontalLine + fieldSpacer + horizontalLine)
 
 
-display_current_turn(localField, enemyField)
+coord_dictionary = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "D": 3,
+    "E": 4,
+    "F": 5,
+    "G": 6,
+    "H": 7,
+    "I": 8,
+    "J": 9,
+}
+
+
+def getInput(text):
+
+    target = input(text)
+    out = []
+    try:
+        out = target.split(",")
+        out[0] = coord_dictionary[out[0]]
+        out[1] = int(out[1])
+    except:
+        print("--- input not valid, please try again:")
+        return getInput()
+    return out
