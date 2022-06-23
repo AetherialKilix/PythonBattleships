@@ -90,14 +90,19 @@ def get_coord_input(text):
         out.append(coord_dictionary[target[0]])
         # cast second value to int
         out.append(int(target[1]))
-        return out
+        if out[1] < 10:
+            return out
+        else:
+            # inform the player about their mistake
+            print("--- input not valid, please try again:")
+            # try again
+            return get_coord_input(text)
     # if interpreting wasn't successful try again
     except ValueError or KeyError:
         # inform the player about their mistake
         print("--- input not valid, please try again:")
         # try again
         return get_coord_input(text)
-    # return output
 
 
 def get_place_input():
@@ -164,14 +169,20 @@ def get_place_input():
                 get_place_input()
 
 
+def ship_placement_dialogue():
+    get_place_input()
+
+
 def active_turn_dialogue():
     target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+    # TODO: implement
 
 
 def server_client_dialogue():
     if get_binary_question_input(">>> Do you want to be the server or the client? (s/c):", "s", "c"):
-        print("--- You are the server now. Waiting for connections...")
+        print("--- You are the server now.")
         port = int(input(">>> Please enter the Port you want to use want to use: "))
+        print("--- Waiting for connections.")
         com.open("server", port)
     else:
         print("--- You are a client now.")

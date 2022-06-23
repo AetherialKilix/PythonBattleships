@@ -1,4 +1,11 @@
 import cli_utils as cli
 
-cli.display_current_turn(cli.dummy_local_field, cli.dummy_enemy_field)
-cli.get_place_input()
+
+def event_order():
+    cli.server_client_dialogue()
+    cli.ship_placement_dialogue()
+    cli.active_turn_dialogue()
+
+
+# start game
+event_order()
