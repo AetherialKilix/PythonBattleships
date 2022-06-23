@@ -159,21 +159,26 @@ def active_turn_dialogue(state):
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         main.connection.send_guess(target)
         main.connection.await_response()
-        # TODO: implement response interpretation
+        x, y = main.connection.await_guess()
+        action = fleet.process_opponent_guess(x, y)
+        print_action(action)
         main.connection.await_guess()
         # TODO: implement guess interpretation
         main.connection.send_response()
         active_turn_dialogue("playing")
     elif state == "client":
-        main.connection.await_guess()
-        # TODO: implement guess interpretation
+        x, y = main.connection.await_guess()
+        action = fleet.process_opponent_guess(x, y)
+        print_action(action)
         main.connection.send_response()
         active_turn_dialogue("playing")
     elif state == "playing":
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         main.connection.send_guess(target)
         main.connection.await_response()
-        # TODO: implement response interpretation
+        x, y = main.connection.await_guess()
+        action = fleet.process_opponent_guess(x, y)
+        print_action(action)
         main.connection.await_guess()
         # TODO: implement guess interpretation
         main.connection.send_response()
@@ -181,6 +186,16 @@ def active_turn_dialogue(state):
     else:
         server_client_dialogue()
 
+
+def print_action(action):
+    if action == com.GuessResponse.SUNK:
+        print("The opponent has sunk one of your ships!")
+    if action == com.GuessResponse.HIt:
+        print("The opponent has hit one of your ships!")
+    if action == com.GuessResponse.MISS:
+        print("The opponent has missed!")
+    if action == com.GuessResponse.WIN:
+        print("The opponent has won the game!")
 
 
 def server_client_dialogue():
@@ -197,13 +212,16 @@ def server_client_dialogue():
                 port = int(port)
                 # try to open port
                 main.connection = com.Connection("server", port)
+                return "server"
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open default port
                 main.connection = com.Connection("server")
+                return "server"
         else:
             # try to open default port
             main.connection = com.Connection("server")
+            return "server"
         print("--- Waiting for connections.")
 
     else:
@@ -220,13 +238,16 @@ def server_client_dialogue():
                 port = int(port)
                 # try to open connection to ip via defined port
                 main.connection = com.Connection("client", port, ip)
+                return "client"
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open connection to ip via default port
                 main.connection = com.Connection("client", address=ip)
+                return "client"
         else:
             # try to open connection to ip via default port
             main.connection = com.Connection("client", address=ip)
+            return "client"
 
 
 def get_binary_question_input(text, arg1, arg2):
