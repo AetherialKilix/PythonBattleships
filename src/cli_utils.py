@@ -81,19 +81,18 @@ def getCoordInput(text):
     out = []
     # try interpreting the input
     try:
-        # split input into two parts [x,y]
-        out = target.split("")
+        print(target[0] + "|" + target[1])
         # lookup the value of a letter as an integer
-        out[0] = coord_dictionary[out[0]]
+        out.append(coord_dictionary[target[0]])
         # cast second value to int
-        out[1] = int(out[1])
+        out.append(int(target[1]))
         return out
     # if interpreting wasn't successful try again
     except:
         # inform the player about their mistake
         print("--- input not valid, please try again:")
         # try again
-        return getCoordInput()
+        return getCoordInput(text)
     # return output
 
 
@@ -101,11 +100,11 @@ def getPlaceInput():
     origin = getCoordInput(">>> Please enter the origin of the ship [Column,Row] :")
     destination = getCoordInput(">>> Please enter the end of the ship [Column,Row] :")
 
-    delta = [0,0]
+    delta = [0, 0]
     delta[0] = int(destination[0]) - int(origin[0])
     delta[1] = int(destination[1]) - int(origin[1])
 
-    if delta[0] != 0 and delta[1] != 0 or delta[0] == 0 and delta[1] == 0:
+    if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
         print("--- input not valid, please try again:")
         return getPlaceInput()
     else:
