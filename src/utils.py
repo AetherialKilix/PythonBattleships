@@ -1,5 +1,6 @@
 import fleet
 
+
 def add_all(values: list):
     out = 0
     for i in values:
@@ -47,8 +48,6 @@ def get_cells_from_ends(origin, end):
     delta[1] = int(end[1]) - int(origin[1])
     # check for rudimentary validity
     if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
-        print("--- input has to be in one vertical or horizontal line, please try again:")
-        # try again
         return None
     # if passes rudimentary validity test
     else:

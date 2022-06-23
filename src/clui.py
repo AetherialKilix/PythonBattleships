@@ -1,6 +1,7 @@
 import fleet
 import communication as com
 import main
+import utils
 
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -45,10 +46,8 @@ def display_current_turn(my_data, en_data):
                 line += "| " + str(my_data[i][j]) + " "
             else:
                 line += "|   "
-
         # add spacer and row counter to enemy field
         line += "|" + field_spacer + " " + str(i) + " "
-
         # iterate over the row of my field
         for j in range(len(my_data[i])):
             # draw datapoint if it isn't 0 ; otherwise draw an empty cell
@@ -58,7 +57,6 @@ def display_current_turn(my_data, en_data):
                 line += "|   "
         # cap row
         line += "|"
-
         # draw constructed line
         print(line)
         # draw the lower border to the row
@@ -111,31 +109,13 @@ def get_place_input():
     origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] :")
     # ask player for end coords
     destination = get_coord_input(">>> Please enter the end of the ship [Column,Row] :")
-    # calculate delta
-    delta = [0, 0]
-    delta[0] = int(destination[0]) - int(origin[0])
-    delta[1] = int(destination[1]) - int(origin[1])
-    # check for rudimentary validity
-    if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
+    # calculate cells of ship
+    cells = utils.get_cells_from_ends(origin, destination)
+    if not cells:
         print("--- input has to be in one vertical or horizontal line, please try again:")
         # try again
-        return get_place_input()
-    # if passes rudimentary validity test
+        get_place_input()
     else:
-        # calc ship-length
-        ship_length = delta[0] + delta[1]
-        # check rotation
-        if delta[0] > 0:
-            direction = fleet.ShipOrientation.HORIZONTAL
-        else:
-            direction = fleet.ShipOrientation.VERTICAL
-        # get all cells which are taken up by the ship
-        cells = []
-        for i in range(abs(ship_length)):
-            if direction == fleet.ShipOrientation.HORIZONTAL:
-                cells.append([origin[0] + i * (ship_length / abs(ship_length)), origin[1]])
-            else:
-                cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
         # try to place ship
         ans = fleet.place_ship(cells)
         # interpret answer of placement-call

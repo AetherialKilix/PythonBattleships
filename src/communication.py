@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import socket
 import fleet
 import utils
@@ -83,7 +85,10 @@ class Connection(object):
         return int(position_strings[0]), int(position_strings[1])
 
     def send_response(self, response: GuessResponse, sunk_fields: str = ""):
-        pass
+        if response == GuessResponse.SUNK:
+            self.connection.send((str(response) + ";" + sunk_fields + ";").encode())
+        else:
+            self.connection.send((str(response) + ";;").encode())
 
     def close(self):
         self.connection.close()
