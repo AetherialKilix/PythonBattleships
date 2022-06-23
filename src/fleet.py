@@ -35,17 +35,20 @@ class ShipPlacementResult(object):
         self.resultType = resultType
         self.ship_id = ship_id
 
-    def succeeded(self):
+    def status_code(self) -> int:
         return self.resultType[0]
 
-    def failed(self):
+    def succeeded(self) -> bool:
+        return self.resultType[1]
+
+    def failed(self) -> bool:
         return not self.resultType[0]
 
-    def get_ship_id(self):
+    def get_ship_id(self) -> int:
         return self.ship_id
 
-    def get_message(self):
-        return self.resultType[1].format(ship_id=self.ship_id)
+    def get_message(self) -> str:
+        return self.resultType[2].format(ship_id=self.ship_id)
 
 
 free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
@@ -54,14 +57,16 @@ my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are st
 enemy_field = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
 
 
-def get_smallest_ship_id():
+def get_smallest_ship_id() -> int:
+    """returns the smallest non-occupied ship id"""
     for i in range(7):
         if free_ship_ids[i]:
-            return i
+            return i + 1
     return -1
 
 
-def place_ship(ship_positions):
+def place_ship(ship_positions: list) -> ShipPlacementResult:
+    """Places a ship at the specified locations. """
     ship_id = get_smallest_ship_id()
     length = len(ship_positions)
     if ships_left[length] <= 0:
@@ -77,7 +82,8 @@ def place_ship(ship_positions):
     return ShipPlacementResult(ShipPlacementResult.SUCCESS, ship_id)
 
 
-def remove_ship(ship_id):
+def remove_ship(ship_id) -> None:
+    """This method clears all fields that have a ship of the supplied id"""
     for x in range(len(my_fleet)):
         for y in range(len(my_fleet[0])):
             if my_fleet[x][y] == ship_id:
