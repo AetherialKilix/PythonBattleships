@@ -157,38 +157,56 @@ def ship_placement_dialogue():
 
 def active_turn_dialogue(state):
     if state == "server":
+        # let player select target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+        # send target coords
         com.INSTANCE.send_guess(target)
+        # receive answer
         com.INSTANCE.await_response()
-        x, y = com.INSTANCE.await_guess()
-        action = fleet.process_opponent_guess(x, y)
-        print_action(action)
-        com.INSTANCE.await_guess()
+        # interpret answer
         # TODO: implement guess interpretation
+        # wait for enemy guess
+        x, y = com.INSTANCE.await_guess()
+        # interpret enemy guess
+        action = fleet.process_opponent_guess(x, y)
+        print_own_action(action)
+        # send answer to enemy
         com.INSTANCE.send_response()
+        # start over
         active_turn_dialogue("playing")
     elif state == "client":
+        # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
+        # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_action(action)
+        print_own_action(action)
+        # send answer to enemy
         com.INSTANCE.send_response()
+        # start over
         active_turn_dialogue("playing")
     elif state == "playing":
+        # let player select a target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+        # send target coords
         com.INSTANCE.send_guess(target)
+        # receive answer
         com.INSTANCE.await_response()
-        x, y = com.INSTANCE.await_guess()
-        action = fleet.process_opponent_guess(x, y)
-        print_action(action)
-        com.INSTANCE.await_guess()
+        # interpret answer
         # TODO: implement guess interpretation
+        # wait for enemy guess
+        x, y = com.INSTANCE.await_guess()
+        # interpret enemy guess
+        action = fleet.process_opponent_guess(x, y)
+        print_own_action(action)
+        # send answer to enemy
         com.INSTANCE.send_response()
+        # start  over
         active_turn_dialogue("playing")
     else:
         server_client_dialogue()
 
 
-def print_action(action):
+def print_enemy_action(action):
     if action == com.GuessResponse.SUNK:
         print("The opponent has sunk one of your ships!")
     if action == com.GuessResponse.HIt:
@@ -196,8 +214,18 @@ def print_action(action):
     if action == com.GuessResponse.MISS:
         print("The opponent has missed!")
     if action == com.GuessResponse.WIN:
-        print("The opponent has won the game!")
+        print("The opponent has won the game! Better luck next time!")
 
+
+def print_own_action(action):
+    if action == com.GuessResponse.SUNK:
+        print("You sunk one of the opponents ships!")
+    if action == com.GuessResponse.HIt:
+        print("You hit one of the opponents ships!")
+    if action == com.GuessResponse.MISS:
+        print("You have missed!")
+    if action == com.GuessResponse.WIN:
+        print("You have won the game! Congratulations!")
 
 def server_client_dialogue():
     # get player answer

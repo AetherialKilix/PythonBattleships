@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import fleet
 
 
@@ -104,13 +105,13 @@ __number_map = [" ", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "�
 def convert_to_circled_number(number: int) -> str:
     return __number_map[number]
 
+
 def get_coords_from_2d_array(data):
     out = []
     # iterate over data and save the coords if the cell is true
     for i in range(data.len):
         for j in range(data[i].len):
             if data[i][j]:
-                out.append([j,i])
+                out.append([j, i])
     # return output
     return out
-
