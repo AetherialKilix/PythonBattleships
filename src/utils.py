@@ -21,3 +21,19 @@ def to_string_list(data):
     for entry in data:
         out.append(str(entry))
     return out
+
+
+def list_operator(a, b, operator=lambda a, b: a + b):
+    out = []
+    if len(a) != len(b):
+        raise ValueError
+    for i in range(len(a)):
+        out = operator(a[i], b[i])
+    return out
+
+
+def create_and_fill_list(size, fill):
+    out = []
+    for i in range(size):
+        out.append(fill)
+    return out
