@@ -84,7 +84,7 @@ def get_cells_from_ends(origin, end):
         # calc ship-length
         ship_length = delta[0] + delta[1]
         is_ship_positive = 1 if ship_length >= 0 else 0
-        ship_length = abs(ship_length)
+        ship_length = abs(ship_length) + 1
         # check rotation
         if delta[0] > 0:
             direction = fleet.ShipOrientation.HORIZONTAL
