@@ -179,16 +179,49 @@ def active_turn_dialogue():
 
 
 def server_client_dialogue():
+    # get player answer
     if get_binary_question_input(">>> Do you want to be the server or the client? (s/c):", "s", "c"):
+        # provide feedback
         print("--- You are the server now.")
-        port = int(input(">>> Please enter the Port you want to use want to use: "))
+        # get player defined port
+        port = input(">>> Please enter the Port you want to use: ")
+        # if port exists try opening port
+        if port:
+            try:
+                # cast port to integer
+                port = int(port)
+                # try to open port
+                com.open("server", port)
+            except ValueError:
+                print("--- Input was not valid, please try again. Default Port is being used.")
+                # try to open default port
+                com.open("server")
+        else:
+            # try to open default port
+            com.open("server")
         print("--- Waiting for connections.")
-        com.open("server", port)
+
     else:
+        # give feedback
         print("--- You are a client now.")
+        # input for user defined IP
         ip = input(">>> Please enter the IP-Address you want to play with: ")
-        port = int(input(">>> Please enter the Port you want to use want to use: "))
-        com.open("server", port, ip)
+        # input for user defined port
+        port = input(">>> Please enter the Port you want to use: ")
+        # if port exists try opening connection via that port
+        if port:
+            try:
+                # cast port to integer
+                port = int(port)
+                # try to open connection to ip via defined port
+                com.open("client", port, ip)
+            except ValueError:
+                print("--- Input was not valid, please try again. Default Port is being used.")
+                # try to open connection to ip via default port
+                com.open("client", address=ip)
+        else:
+            # try to open connection to ip via default port
+            com.open("client", address=ip)
 
 
 def get_binary_question_input(text, arg1, arg2):
