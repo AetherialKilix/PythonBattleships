@@ -1,7 +1,8 @@
 import fleet
 import communication as com
-import main
 import utils
+
+
 
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -157,31 +158,31 @@ def ship_placement_dialogue():
 def active_turn_dialogue(state):
     if state == "server":
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
-        main.connection.send_guess(target)
-        main.connection.await_response()
-        x, y = main.connection.await_guess()
+        com.INSTANCE.send_guess(target)
+        com.INSTANCE.await_response()
+        x, y = com.INSTANCE.await_guess()
         action = fleet.process_opponent_guess(x, y)
         print_action(action)
-        main.connection.await_guess()
+        com.INSTANCE.await_guess()
         # TODO: implement guess interpretation
-        main.connection.send_response()
+        com.INSTANCE.send_response()
         active_turn_dialogue("playing")
     elif state == "client":
-        x, y = main.connection.await_guess()
+        x, y = com.INSTANCE.await_guess()
         action = fleet.process_opponent_guess(x, y)
         print_action(action)
-        main.connection.send_response()
+        com.INSTANCE.send_response()
         active_turn_dialogue("playing")
     elif state == "playing":
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
-        main.connection.send_guess(target)
-        main.connection.await_response()
-        x, y = main.connection.await_guess()
+        com.INSTANCE.send_guess(target)
+        com.INSTANCE.await_response()
+        x, y = com.INSTANCE.await_guess()
         action = fleet.process_opponent_guess(x, y)
         print_action(action)
-        main.connection.await_guess()
+        com.INSTANCE.await_guess()
         # TODO: implement guess interpretation
-        main.connection.send_response()
+        com.INSTANCE.send_response()
         active_turn_dialogue("playing")
     else:
         server_client_dialogue()
@@ -211,16 +212,16 @@ def server_client_dialogue():
                 # cast port to integer
                 port = int(port)
                 # try to open port
-                main.connection = com.Connection("server", port)
+                com.INSTANCE = com.Connection("server", port)
                 return "server"
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open default port
-                main.connection = com.Connection("server")
+                com.INSTANCE = com.Connection("server")
                 return "server"
         else:
             # try to open default port
-            main.connection = com.Connection("server")
+            com.INSTANCE = com.Connection("server")
             return "server"
     else:
         # give feedback
@@ -235,16 +236,16 @@ def server_client_dialogue():
                 # cast port to integer
                 port = int(port)
                 # try to open connection to ip via defined port
-                main.connection = com.Connection("client", port, ip)
+                com.INSTANCE = com.Connection("client", port, ip)
                 return "client"
             except ValueError:
                 print("--- Input was not valid, please try again. Default Port is being used.")
                 # try to open connection to ip via default port
-                main.connection = com.Connection("client", address=ip)
+                com.INSTANCE = com.Connection("client", address=ip)
                 return "client"
         else:
             # try to open connection to ip via default port
-            main.connection = com.Connection("client", address=ip)
+            com.INSTANCE = com.Connection("client", address=ip)
             return "client"
 
 

@@ -76,14 +76,13 @@ def get_smallest_ship_id() -> int:
     return -1
 
 
-def place_ship(ship_positions: list) -> ShipPlacementResult:
     """Places a ship at the specified locations. """
     ship_id = get_smallest_ship_id()
     length = len(ship_positions)
     if ships_left[length] <= 0:
         return ShipPlacementResult(ShipPlacementResult.NO_MORE_OF_SIZE)
     for pos in ship_positions:
-        if my_fleet[pos[0]][pos[1]] != 0:  # pos = [x, y], 0 means the space is still empty
+        if my_fleet[pos[0]][pos[1]] != 0:  # pos = [x, y], 0 means the space is still em pty
             return ShipPlacementResult(ShipPlacementResult.DOES_NOT_FIT, my_fleet[pos[0]][pos[1]])
     # if this is reached, the ship does fit
     for pos in ship_positions:

@@ -6,6 +6,9 @@ import utils
 from enum import Enum
 
 
+INSTANCE = None
+
+
 class GuessResponse(Enum):
     MISS = 0,
     HIT = 1,
