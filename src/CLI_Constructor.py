@@ -82,11 +82,12 @@ def getCoordInput(text):
     # try interpreting the input
     try:
         # split input into two parts [x,y]
-        out = target.split(",")
+        out = target.split("")
         # lookup the value of a letter as an integer
         out[0] = coord_dictionary[out[0]]
         # cast second value to int
         out[1] = int(out[1])
+        return out
     # if interpreting wasn't successful try again
     except:
         # inform the player about their mistake
@@ -94,7 +95,6 @@ def getCoordInput(text):
         # try again
         return getCoordInput()
     # return output
-    return out
 
 
 def getPlaceInput():
