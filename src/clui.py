@@ -61,37 +61,36 @@ def get_coord_input(text):
     out = []
     # try interpreting the input
     try:
-        # lookup the value of a letter as an integer
-        out.append(coord_dictionary[target[0]])
         # cast second value to int
         out.append(int(target[1]))
+        # lookup the value of a letter as an integer
+        out.append(coord_dictionary[target[0]])
         if out[1] < 10:
             return out
         else:
             # inform the player about their mistake
-            print("--- input not valid, please try again:")
+            print("--- input not valid, please try again: ")
             # try again
             return get_coord_input(text)
     # if interpreting wasn't successful try again
     except ValueError or KeyError:
         # inform the player about their mistake
-        print("--- input not valid, please try again:")
+        print("--- input not valid, please try again: ")
         # try again
         return get_coord_input(text)
 
 
-# TODO: while True & continue
 def get_place_input():
     # display field
     display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
     # ask player for origin coords
-    origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] :")
+    origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] : ")
     # ask player for end coords
-    destination = get_coord_input(">>> Please enter the end of the ship [Column,Row] :")
+    destination = get_coord_input(">>> Please enter the end of the ship [Column,Row] : ")
     # calculate cells of ship
     cells = utils.get_cells_from_ends(origin, destination)
     if not cells:
-        print("--- input has to be in one vertical or horizontal line, please try again:")
+        print("--- input has to be in one vertical or horizontal line, please try again: ")
         # try again
         get_place_input()
     else:
@@ -114,7 +113,7 @@ def get_place_input():
                 # print error message
                 print("--- " + ans.get_message())
                 # ask player if he wants to remove the ship that is in the way
-                if get_binary_question_input(">>> Do you want to remove the colliding ship? (y/n):", "y", "n"):
+                if get_binary_question_input(">>> Do you want to remove the colliding ship? (y/n): ", "y", "n"):
                     # if yes, remove colliding ship & place new one
                     fleet.remove_ship(ans.get_ship_id())
                     fleet.place_ship(cells)
@@ -138,7 +137,7 @@ def active_turn_dialogue(state):
         # display fields
         display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
         # let player select target
-        target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+        target = get_coord_input(">>> Please enter your Target [Column,Row] : ")
         # send target coords
         com.INSTANCE.send_guess(target[0], target[1])
         # receive answer
@@ -229,7 +228,7 @@ def print_own_action(action):
 
 def server_client_dialogue():
     # get player answer
-    if get_binary_question_input(">>> Do you want to be the server or the client? (s/c):", "s", "c"):
+    if get_binary_question_input(">>> Do you want to be the server or the client? (s/c) : ", "s", "c"):
         # provide feedback
         print("--- You are the server now.")
         # get player defined port
