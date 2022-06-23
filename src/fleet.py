@@ -26,12 +26,12 @@ class ShipOrientation(Enum):  # used is the numeric id, but this is easier to us
         return self.value
 
 
-class ShipPlacementResult:
+class ShipPlacementResult(object):
     NO_MORE_OF_SIZE = 0, False, "no ship of that size left"
     DOES_NOT_FIT = 1, False, "the ship does not fit there"
     SUCCESS = 2, True, "ship {ship_id:d} placed successfully"
 
-    def __int__(self, resultType, ship_id=-1):
+    def __init__(self, resultType, ship_id=-1):
         self.resultType = resultType
         self.ship_id = ship_id
 
@@ -65,16 +65,16 @@ def place_ship(ship_positions):
     ship_id = get_smallest_ship_id()
     length = len(ship_positions)
     if ships_left[length] <= 0:
-        return False, "no ship of that size left"
+        return ShipPlacementResult(ShipPlacementResult.NO_MORE_OF_SIZE)
     for pos in ship_positions:
         if my_fleet[pos[0]][pos[1]] != 0:  # pos = [x, y], 0 means the space is still empty
-            return False, "the ship does not fit there"
+            return ShipPlacementResult(ShipPlacementResult.DOES_NOT_FIT, my_fleet[pos[0]][pos[1]])
     # if this is reached, the ship does fit
     for pos in ship_positions:
         my_fleet[pos[0]][pos[1]] = ship_id
     ships_left[length] -= 1  # decrement the ships of the specific length we still have left
     free_ship_ids[ship_id] = False
-    return True, "ship " + str(ship_id) + " placed"
+    return ShipPlacementResult(ShipPlacementResult.SUCCESS, ship_id)
 
 
 def remove_ship(ship_id):
