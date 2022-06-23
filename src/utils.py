@@ -77,12 +77,14 @@ def get_cells_from_ends(origin, end):
     delta[0] = int(end[0]) - int(origin[0])
     delta[1] = int(end[1]) - int(origin[1])
     # check for rudimentary validity
-    if (delta[0] != 0 and delta[1] != 0) or (delta[0] == 0 and delta[1] == 0):
+    if delta[0] != 0 and delta[1] != 0:
         return None
     # if passes rudimentary validity test
     else:
         # calc ship-length
         ship_length = delta[0] + delta[1]
+        is_ship_positive = 1 if ship_length >= 0 else 0
+        ship_length = abs(ship_length)
         # check rotation
         if delta[0] > 0:
             direction = fleet.ShipOrientation.HORIZONTAL
@@ -90,11 +92,11 @@ def get_cells_from_ends(origin, end):
             direction = fleet.ShipOrientation.VERTICAL
         # get all cells which are taken up by the ship
         cells = []
-        for i in range(abs(ship_length)):
+        for i in range(ship_length):
             if direction == fleet.ShipOrientation.HORIZONTAL:
-                cells.append([origin[0] + i * int(ship_length / abs(ship_length)), origin[1]])
+                cells.append([origin[0] + i * is_ship_positive, origin[1]])
             else:
-                cells.append([origin[0], origin[1] + i * int(ship_length / abs(ship_length))])
+                cells.append([origin[0], origin[1] + i * is_ship_positive])
         # return ship cells
         return cells
 

@@ -1,3 +1,5 @@
+import time
+
 import fleet
 import communication as com
 import utils
@@ -85,8 +87,12 @@ def get_place_input():
     display_current_turn(fleet.get_fleet_as_string(), fleet.enemy_field)
     # ask player for origin coords
     origin = get_coord_input(">>> Please enter the origin of the ship [Column,Row] : ")
+    if not origin:
+        get_place_input()
     # ask player for end coords
     destination = get_coord_input(">>> Please enter the end of the ship [Column,Row] : ")
+    if not destination:
+        get_place_input()
     # calculate cells of ship
     cells = utils.get_cells_from_ends(origin, destination)
     if not cells:
@@ -144,6 +150,7 @@ def active_turn_dialogue(state):
         response, payload = com.INSTANCE.await_response()
         if response == fleet.GuessResponse.WIN:
             com.INSTANCE.close()
+            print_own_action(response)
             quit()
         fleet.process_response(target[0], target[1], response, payload)
         # display fields
@@ -187,7 +194,7 @@ def active_turn_dialogue(state):
         # receive answer
         response, payload = com.INSTANCE.await_response()
         if response == fleet.GuessResponse.WIN:
-            com.INSTANCE.send_response(com.GuessResponse.WIN, [])
+            print_own_action(response)
             com.INSTANCE.close()
             quit()
         fleet.process_response(target[0], target[1], response, payload)
@@ -222,7 +229,6 @@ def print_enemy_action(action):
         print("The opponent has missed!")
     elif action == com.GuessResponse.WIN:
         print("The opponent has won the game! Better luck next time!")
-        quit()
     else:
         print("The opponent has played an invalid turn!")
 
