@@ -213,6 +213,7 @@ def print_enemy_action(action):
         print("The opponent has missed!")
     if action == com.GuessResponse.WIN:
         print("The opponent has won the game! Better luck next time!")
+        quit()
 
 
 def print_own_action(action):
