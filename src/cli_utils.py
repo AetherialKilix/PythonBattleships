@@ -1,4 +1,5 @@
 import fleet
+import communication as com
 
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -76,8 +77,6 @@ coord_dictionary = {
     "J": 9,
 }
 
-default_text = ">>> Please enter your Target [Column,Row] :"
-
 
 def get_coord_input(text):
     # get player input
@@ -93,7 +92,7 @@ def get_coord_input(text):
         out.append(int(target[1]))
         return out
     # if interpreting wasn't successful try again
-    except:
+    except ValueError or KeyError:
         # inform the player about their mistake
         print("--- input not valid, please try again:")
         # try again
@@ -131,8 +130,64 @@ def get_place_input():
                 cells.append([origin[0] + i * (ship_length / abs(ship_length)), origin[1]])
             else:
                 cells.append([origin[0], origin[1] + i * (ship_length / abs(ship_length))])
+        # try to place ship
+        ans = fleet.place_ship(cells)
+        # interpret answer of placement-call
+        if ans.succeeded():
+            # PARTEY
+            # if out of ships
+            if fleet.is_out_of_ships():
+                print("--- Done placing, waiting for other player...")
+                # TODO: Tell Networking that it should tell the other player he stinks
+            # continue placing
+            else:
+                get_place_input()
+        # if it was a failure
+        else:
+            # if it collided with another ship
+            if ans.status_code() == 1:
+                # print error message
+                print("--- " + ans.get_message())
+                # ask player if he wants to remove the ship that is in the way
+                if get_binary_question_input(">>> Do you want to remove the colliding ship? (y/n):", "y", "n"):
+                    # if yes, remove colliding ship & place new one
+                    fleet.remove_ship(ans.get_ship_id())
+                    fleet.place_ship(cells)
+                else:
+                    # try again
+                    get_place_input()
+            # if it failed for another reason
+            else:
+                # print error message
+                print("--- " + ans.get_message())
+                # continue placing
+                get_place_input()
 
-        print(ship_length)
-        print(cells)
 
-        # TODO: place
+def active_turn_dialogue():
+    target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+
+
+def server_client_dialogue():
+    if get_binary_question_input(">>> Do you want to be the server or the client? (s/c):", "s", "c"):
+        print("--- You are the server now. Waiting for connections...")
+        port = int(input(">>> Please enter the Port you want to use want to use: "))
+        com.open("server", port)
+    else:
+        print("--- You are a client now.")
+        ip = input(">>> Please enter the IP-Address you want to play with: ")
+        port = int(input(">>> Please enter the Port you want to use want to use: "))
+        com.open("server", port, ip)
+
+
+def get_binary_question_input(text, arg1, arg2):
+    # get player input
+    answer = input(text)
+    # check player answer
+    if answer[0].lower() == arg1:
+        return True
+    elif answer[0].lower() == arg2:
+        return False
+    else:
+        print("--- input isn't valid (" + arg1 + "/" + arg2 + "), please try again")
+        return get_binary_question_input(text, arg1, arg2)
