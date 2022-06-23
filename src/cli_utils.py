@@ -174,9 +174,33 @@ def ship_placement_dialogue():
     get_place_input()
 
 
-def active_turn_dialogue():
-    target = get_coord_input(">>> Please enter your Target [Column,Row] :")
-    # TODO: implement
+def active_turn_dialogue(state):
+    if state == "server":
+        target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+        main.connection.send_guess(target)
+        main.connection.await_response()
+        # TODO: implement response interpretation
+        main.connection.await_guess()
+        # TODO: implement guess interpretation
+        main.connection.send_response()
+        active_turn_dialogue("playing")
+    elif state == "client":
+        main.connection.await_guess()
+        # TODO: implement guess interpretation
+        main.connection.send_response()
+        active_turn_dialogue("playing")
+    elif state == "playing":
+        target = get_coord_input(">>> Please enter your Target [Column,Row] :")
+        main.connection.send_guess(target)
+        main.connection.await_response()
+        # TODO: implement response interpretation
+        main.connection.await_guess()
+        # TODO: implement guess interpretation
+        main.connection.send_response()
+        active_turn_dialogue("playing")
+    else:
+        server_client_dialogue()
+
 
 
 def server_client_dialogue():
