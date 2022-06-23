@@ -57,16 +57,16 @@ class ShipPlacementResult(object):
 
 
 free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
-ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
+#ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
+ships_left = [0, 0, 1, 0, 0, 0]  # stores how many ships of each size are in the fleet (starting at 1x0)
 
 my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
-my_fleet_unhit = utils.create_2d_list(10,
-                                      0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
+my_fleet_unhit = utils.create_2d_list(10, 0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
 enemy_field = utils.create_2d_list(10, FieldState.UNKNOWN)  # stores what is known about the enemy field
 
 
 def is_out_of_ships() -> bool:
-    return utils.add_all(ships_left)
+    return utils.add_all(ships_left) == 0
 
 
 def get_smallest_ship_id() -> int:
