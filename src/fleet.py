@@ -109,7 +109,7 @@ def process_hit(x: int, y: int, ship_id: int) -> tuple[bool, list]:
     pass
 
 
-def process_guess(x: int, y: int) -> tuple[GuessResponse, list]:
+def process_opponent_guess(x: int, y: int) -> tuple[GuessResponse, list]:
     field = my_fleet[x][y]
     if field == 0:  # means, there is no ship -> MISS
         return GuessResponse.MISS, []
