@@ -2,8 +2,6 @@ import fleet
 import communication as com
 import utils
 
-
-
 dummy_local_field = [[2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                      [2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -160,16 +158,20 @@ def active_turn_dialogue(state):
         # let player select target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         # send target coords
-        com.INSTANCE.send_guess(target)
+        com.INSTANCE.send_guess(target[0], target[1])
         # receive answer
-        com.INSTANCE.await_response()
+        response, payload = com.INSTANCE.await_response()
         # interpret answer
+        print_own_action(response)
+        if response == fleet.GuessResponse.WIN:
+            com.INSTANCE.close()
+            quit()
         # TODO: implement guess interpretation
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_own_action(action)
+        print_enemy_action(action)
         # send answer to enemy
         com.INSTANCE.send_response()
         # start over
@@ -179,7 +181,7 @@ def active_turn_dialogue(state):
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_own_action(action)
+        print_enemy_action(action)
         # send answer to enemy
         com.INSTANCE.send_response()
         # start over
@@ -188,16 +190,20 @@ def active_turn_dialogue(state):
         # let player select a target
         target = get_coord_input(">>> Please enter your Target [Column,Row] :")
         # send target coords
-        com.INSTANCE.send_guess(target)
+        com.INSTANCE.send_guess(target[0], target[1])
         # receive answer
-        com.INSTANCE.await_response()
+        response, payload = com.INSTANCE.await_response()
         # interpret answer
+        print_own_action(response)
+        if response == fleet.GuessResponse.WIN:
+            com.INSTANCE.close()
+            quit()
         # TODO: implement guess interpretation
         # wait for enemy guess
         x, y = com.INSTANCE.await_guess()
         # interpret enemy guess
         action = fleet.process_opponent_guess(x, y)
-        print_own_action(action)
+        print_enemy_action(action)
         # send answer to enemy
         com.INSTANCE.send_response()
         # start  over
@@ -226,6 +232,7 @@ def print_own_action(action):
         print("You have missed!")
     if action == com.GuessResponse.WIN:
         print("You have won the game! Congratulations!")
+
 
 def server_client_dialogue():
     # get player answer
@@ -288,4 +295,3 @@ def get_binary_question_input(text, arg1, arg2):
     else:
         print("--- input isn't valid (" + arg1 + "/" + arg2 + "), please try again")
         return get_binary_question_input(text, arg1, arg2)
-
