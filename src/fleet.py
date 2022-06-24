@@ -57,7 +57,8 @@ class ShipPlacementResult(object):
 
 
 free_ship_ids = utils.create_and_fill_list(7, True)  # store the unused ids
-ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
+# ships_left = [0, 2, 2, 1, 1, 1]  # stores how many ships of each size are in the fleet (starting at 1x0)
+ships_left = [0, 0, 2, 0, 0, 0]
 
 my_fleet = utils.create_2d_list(10, 0)  # stores where the player's ships are stored
 my_fleet_unhit = utils.create_2d_list(10, 0)  # stores where the enemy is yet to hit a ship (0 = water or hit, 1 = unhit)
@@ -151,6 +152,6 @@ def process_response(x: int, y: int, response: GuessResponse, sunk: list):
     if response == GuessResponse.HIT:
         enemy_field[x][y] = FieldState.HIT
     if response == GuessResponse.SUNK:
-        data = utils.get_cells_from_ends(sunk)
+        data = utils.get_cells_from_ends(sunk[0], sunk[1])
         for cell in data:
-            enemy_field[cell[0]][cell[1]] = FieldState.SUNK
+            enemy_field[cell[1]][cell[0]] = FieldState.SUNK

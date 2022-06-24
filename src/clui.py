@@ -4,10 +4,9 @@ import fleet
 import communication as com
 import utils
 
-
-field_spacer    = "         "
-x_coords        = "     A   B   C   D   E   F   G   H   I   J  "
-horizontalLine  = "   +---+---+---+---+---+---+---+---+---+---+"
+field_spacer = "         "
+x_coords = "     A   B   C   D   E   F   G   H   I   J  "
+horizontalLine = "   +---+---+---+---+---+---+---+---+---+---+"
 
 
 def display_current_turn(my_data, en_data):

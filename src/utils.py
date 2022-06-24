@@ -94,9 +94,9 @@ def get_cells_from_ends(origin, end):
         cells = []
         for i in range(ship_length):
             if direction == fleet.ShipOrientation.HORIZONTAL:
-                cells.append([origin[0] + i * is_ship_positive, origin[1]])
+                cells.append([int(origin[0]) + i * is_ship_positive, int(origin[1])])
             else:
-                cells.append([origin[0], origin[1] + i * is_ship_positive])
+                cells.append([int(origin[0]), int(origin[1]) + i * is_ship_positive])
         # return ship cells
         return cells
 
@@ -114,3 +114,7 @@ def get_coords_from_2d_array(data):
 
 def get_ends_of_list(list_in: list) -> list:
     return [list_in[0], list_in[len(list_in) - 1]]
+
+
+def position_list_to_string(list_in: list) -> str:
+    return str(list_in).replace("[", "").replace("]", "")

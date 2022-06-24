@@ -91,9 +91,9 @@ class Connection(object):
 
         return int(position_strings[0]), int(position_strings[1])
 
-    def send_response(self, response: GuessResponse, sunk_fields: str = ""):
+    def send_response(self, response: GuessResponse, sunk_fields: list = []):
         if response == GuessResponse.SUNK:
-            self.connection.send((str(response) + ";" + sunk_fields + ";").encode())
+            self.connection.send((str(response) + ";" + utils.position_list_to_string(sunk_fields) + ";").encode())
         else:
             self.connection.send((str(response) + ";;").encode())
 
